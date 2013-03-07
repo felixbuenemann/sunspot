@@ -8,10 +8,16 @@ module Sunspot
       end
 
 
-      def execute_with_as_instrumentation(path, params={}, *extra)
-        ActiveSupport::Notifications.instrument("request.rsolr",
-                                                {:path => path, :parameters => params}) do
-          execute_without_as_instrumentation(path, params, *extra)
+      def execute_with_as_instrumentation(client, request_context)
+        data = {
+          :method => request_context[:method].upcase
+          :uri => request_context[:uri]
+        }
+        if request_context[:method] == :post and request_context[:data]
+          data[:uri] << "&#{Rack::Utils.unescape(request_context[:data])}"
+        end
+        ActiveSupport::Notifications.instrument("request.rsolr", data) do
+          execute_without_as_instrumentation(client, request_context)
         end
       end
     end
