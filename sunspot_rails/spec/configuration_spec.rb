@@ -10,28 +10,13 @@ describe Sunspot::Rails::Configuration, "default values without a sunspot.yml" d
     @config.hostname.should == 'localhost'
   end  
   
-  it "should handle the 'path' property when not set" do
-    @config.path.should == '/solr/default'
+  it "should default the 'path' property to match the environment" do
+    ::Rails.stub!(:env => 'foobar')
+    @config.path.should == '/solr/foobar'
   end
 
   describe "port" do
-    it "should default to port 8981 in test" do
-      ::Rails.stub!(:env => 'test')
-      @config = Sunspot::Rails::Configuration.new
-      @config.port.should == 8981
-    end
-    it "should default to port 8982 in development" do
-      ::Rails.stub!(:env => 'development')
-      @config = Sunspot::Rails::Configuration.new
-      @config.port.should == 8982
-    end
-    it "should default to 8983 in production" do
-      ::Rails.stub!(:env => 'production')
-      @config = Sunspot::Rails::Configuration.new
-      @config.port.should == 8983
-    end
-    it "should generally default to 8983" do
-      ::Rails.stub!(:env => 'staging')
+    it "should default to 8983" do
       @config = Sunspot::Rails::Configuration.new
       @config.port.should == 8983
     end

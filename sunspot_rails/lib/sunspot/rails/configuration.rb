@@ -345,14 +345,12 @@ module Sunspot #:nodoc:
       end
       
       def default_port
-        { 'test'        => 8981,
-          'development' => 8982,
-          'production'  => 8983
-        }[::Rails.env]  || 8983
+        8983
       end
       
       def default_path
-        '/solr/default'
+        env = ::Rails.env || 'development'
+        "/solr/#{env}"
       end
       
     end
